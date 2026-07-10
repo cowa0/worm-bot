@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>WORM GOLD 👹</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0a0a0a; color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif;
+      display: flex; justify-content: center; align-items: center; min-height: 100vh;
+      padding: 15px; user-select: none; -webkit-tap-highlight-color: transparent;
+    }
+    .app {
+      width: 100%; max-width: 400px; background: #111; border-radius: 25px;
+      padding: 25px 20px; box-shadow: 0 0 30px rgba(0,255,0,0.1);
+      border: 1px solid #222; text-align: center;
+    }
+    .logo { font-size: 2.5rem; margin-bottom: 5px; }
+    .title { color: #00ff00; font-weight: 900; font-size: 1.6rem; letter-spacing: 2px; margin-bottom: 20px; }
+    .input-box {
+      background: #1a1a1a; border: 1px solid #333; border-radius: 15px; padding: 5px 15px;
+      margin-bottom: 12px; display: flex; align-items: center;
+    }
+    .input-box span { font-size: 1.2rem; margin-left: 10px; color: #888; }
+    .input-box input {
+      width: 100%; background: transparent; border: none; color: #fff;
+      font-size: 1.1rem; padding: 15px 0; outline: none; text-align: right;
+      font-family: monospace;
+    }
+    .btn {
+      background: #00ff00; color: #000; border: none; width: 100%; padding: 16px;
+      border-radius: 15px; font-size: 1.2rem; font-weight: 900; margin: 10px 0;
+      cursor: pointer; letter-spacing: 1px; transition: 0.2s;
+    }
+    .btn:active { transform: scale(0.96); opacity: 0.9; }
+    .result-card {
+      background: #1a1a1a; border-radius: 20px; padding: 20px; margin-top: 15px;
+      border: 2px solid #333; display: none; animation: fadeIn 0.3s ease;
+    }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .signal-icon { font-size: 3rem; }
+    .decision { font-size: 1.8rem; font-weight: 900; margin: 10px 0; }
+    .detail-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #222; color: #aaa; }
+    .detail-val { color: #fff; font-weight: bold; }
+    .footer { color: #444; font-size: 0.7rem; margin-top: 20px; }
+  </style>
+</head>
+<body>
+<div class="app">
+  <div class="logo">👹</div>
+  <div class="title">WORM GOLD</div>
+
+  <div class="input-box"><span>💰</span><input type="number" id="price" placeholder="السعر الحالي" step="any"></div>
+  <div class="input-box"><span>📈</span><input type="number" id="resistance" placeholder="أقرب مقاومة (قمة)" step="any"></div>
+  <div class="input-box"><span>📉</span><input type="number" id="support" placeholder="أقرب دعم (قاع)" step="any"></div>
+
+  <button class="btn" onclick="analyze()">⚡ حلل الآن</button>
+
+  <div class="result-card" id="result">
+    <div class="signal-icon" id="icon"></div>
+    <div class="decision" id="decision"></div>
+    <div style="color:#aaa;margin-bottom:15px;" id="note"></div>
+    <div class="detail-row"><span>🎯 الهدف</span><span class="detail-val" id="tp"></span></div>
+    <div class="detail-row"><span>🛑 الوقف</span><span class="detail-val" id="sl"></span></div>
+    <div class="detail-row"><span>⚖️ القوة</span><span class="detail-val" id="strength"></span></div>
+  </div>
+  <div class="footer">WORM GPT 👹 | حسين الدراجي</div>
+</div>
+
+<script>
+  function analyze() {
+    const p = parseFloat(document.getElementById('price').value);
+    const r = parseFloat(document.getElementById('resistance').value);
+    const s = parseFloat(document.getElementById('support').value);
+    const res = document.getElementById('result');
+
+    if (isNaN(p) || isNaN(r) || isNaN(s) || s >= r) {
+      alert('تأكد من الأرقام: السعر، المقاومة، الدعم (الدعم أقل من المقاومة)');
+      return;
+    }
+
+    const range = r - s;
+    const pos = ((p - s) / range) * 100;
+    let icon, decision, color, note, tp, sl, strength;
+
+    if (pos <= 30) {
+      icon = '📈'; decision = 'شراء'; color = '#00ff00';
+      note = 'السعر قرب الدعم القوي. فرصة شراء ممتازة.';
+      tp = (p + range * 0.4).toFixed(2); sl = (s - range * 0.03).toFixed(2);
+      strength = Math.min(95, 70 + (30 - pos) * 1.5).toFixed(0) + '%';
+    } else if (pos >= 70) {
+      icon = '📉'; decision = 'بيع'; color = '#ff4444';
+      note = 'السعر قرب المقاومة. فرصة بيع ممتازة.';
+      tp = (p - range * 0.4).toFixed(2); sl = (r + range * 0.03).toFixed(2);
+      strength = Math.min(95, 70 + (pos - 70) * 1.5).toFixed(0) + '%';
+    } else {
+      icon = '⏸️'; decision = 'انتظار'; color = '#ffaa00';
+      note = 'السعر في المنتصف. لا توجد فرصة واضحة.';
+      tp = '-'; sl = '-'; strength = Math.round(50 - Math.abs(pos-50)*1.2) + '%';
+    }
+
+    res.style.display = 'block';
+    document.getElementById('icon').innerText = icon;
+    document.getElementById('decision').style.color = color;
+    document.getElementById('decision').innerText = decision;
+    document.getElementById('note').innerText = note;
+    document.getElementById('tp').innerText = tp;
+    document.getElementById('sl').innerText = sl;
+    document.getElementById('strength').innerText = strength;
+    res.scrollIntoView({ behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>
