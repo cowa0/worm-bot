@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>WORM STATION MAX 👹</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #000; color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif;
+      display: flex; justify-content: center; align-items: flex-start; min-height: 100vh;
+      padding: 10px; background-image: radial-gradient(circle at 50% 0%, #0a1a0a 0%, #000 90%);
+    }
+    .container { width: 100%; max-width: 450px; display: flex; flex-direction: column; gap: 12px; }
+    .header { text-align: center; padding: 20px 0 10px; }
+    .header h1 { font-size: 2rem; font-weight: 900; color: #00ff00; text-shadow: 0 0 15px #00ff0044; letter-spacing: 2px; }
+    .header .sub { font-size: 0.7rem; color: #888; letter-spacing: 5px; }
+    
+    .card {
+      background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 20px;
+      padding: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+    }
+    .card-title { font-size: 0.8rem; color: #666; letter-spacing: 2px; margin-bottom: 12px; text-align: left; }
+
+    .input-row { display: flex; gap: 10px; margin-bottom: 12px; }
+    .input-group { flex: 1; }
+    .input-group label { font-size: 0.65rem; color: #555; display: block; margin-bottom: 4px; }
+    .input-group input, .input-group select {
+      width: 100%; padding: 12px 8px; background: #111; border: 1px solid #222; border-radius: 10px;
+      color: #fff; font-size: 0.9rem; font-family: monospace; outline: none; text-align: center;
+    }
+    .input-group select { color: #00ff00; }
+    
+    .btn {
+      background: #00ff00; color: #000; border: none; width: 100%; padding: 16px;
+      border-radius: 15px; font-size: 1.1rem; font-weight: 900; cursor: pointer;
+      margin-top: 10px; letter-spacing: 1px; transition: 0.2s;
+    }
+    .btn:active { transform: scale(0.96); opacity: 0.9; }
+    
+    .result-box {
+      background: #0a0a0a; border: 2px solid #00ff00; border-radius: 20px; padding: 20px;
+      margin-top: 10px; display: none; animation: fadeIn 0.3s ease; text-align: center;
+    }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    .signal { font-size: 2.5rem; font-weight: 900; margin: 10px 0; }
+    .confidence-bar { height: 6px; background: #1a1a1a; border-radius: 10px; margin: 15px 0; overflow: hidden; }
+    .confidence-fill { height: 100%; border-radius: 10px; transition: width 1s ease; }
+    
+    .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 15px 0; text-align: center; }
+    .stat-item { background: #111; padding: 10px; border-radius: 10px; }
+    .stat-label { font-size: 0.6rem; color: #555; }
+    .stat-val { font-weight: bold; font-family: monospace; font-size: 1rem; color: #fff; margin-top: 4px; }
+
+    .indicator-list { text-align: left; font-size: 0.7rem; color: #aaa; margin-top: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+    .indicator-item { padding: 4px 8px; border-radius: 5px; background: #111; }
+    .indicator-item.bullish { color: #00ff00; }
+    .indicator-item.bearish { color: #ff4444; }
+
+    .footer { color: #333; font-size: 0.6rem; text-align: center; letter-spacing: 2px; margin-top: 10px; }
+    .badge { background: #00ff00; color: #000; font-size: 0.6rem; padding: 2px 8px; border-radius: 20px; display: inline-block; margin-right: 5px; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>WORM STATION 👹</h1>
+    <div class="sub">✦ MAX COMMAND CENTER ✦</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📊 إعدادات التحليل</div>
+    
+    <div class="input-row">
+      <div class="input-group" style="flex:1.5;">
+        <label>💰 السعر الحالي</label>
+        <input type="number" id="price" placeholder="مثلاً 4105.50" step="any">
+      </div>
+      <div class="input-group" style="flex:1;">
+        <label>🎯 الأصل</label>
+        <select id="symbol">
+          <option value="XAUUSD">🥇 ذهب</option>
+          <option value="BTCUSD">₿ بيتكوين</option>
+          <option value="EURUSD">💵 يورو/دولار</option>
+          <option value="GBPUSD">💷 باوند/دولار</option>
+          <option value="WTI">🛢️ نفط</option>
+          <option value="XAGUSD">🥈 فضة</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="input-row">
+      <div class="input-group">
+        <label>📉 الدعم (القاع)</label>
+        <input type="number" id="support" placeholder="مثلاً 4080" step="any">
+      </div>
+      <div class="input-group">
+        <label>📈 المقاومة (القمة)</label>
+        <input type="number" id="resistance" placeholder="مثلاً 4120" step="any">
+      </div>
+    </div>
+
+    <div class="input-row">
+      <div class="input-group">
+        <label>⚡ الأسلوب</label>
+        <select id="style">
+          <option value="scalp">سكالبينج (سريع)</option>
+          <option value="swing" selected>سوينغ (متوسط)</option>
+          <option value="long">طويل المدى</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label>🏦 رأس المال ($)</label>
+        <input type="number" id="capital" placeholder="مثلاً 1000" step="any" value="1000">
+      </div>
+    </div>
+
+    <button class="btn" onclick="runAnalysis()">⚡ تحليل فوري (6 مؤشرات)</button>
+  </div>
+
+  <div class="result-box" id="resultPanel">
+    <div style="font-size:0.7rem; color:#888; margin-bottom:5px;" id="symbolName"></div>
+    <div class="signal" id="decisionText">انتظار</div>
+    <div class="confidence-bar"><div class="confidence-fill" id="confidenceFill" style="width: 0%;"></div></div>
+    
+    <div class="stats-grid">
+      <div class="stat-item"><span class="stat-label">🎯 هدف</span><div class="stat-val" id="tpVal">-</div></div>
+      <div class="stat-item"><span class="stat-label">🛑 وقف</span><div class="stat-val" id="slVal">-</div></div>
+      <div class="stat-item"><span class="stat-label">📊 القوة</span><div class="stat-val" id="strengthVal">-%</div></div>
+      <div class="stat-item"><span class="stat-label">⚖️ R:R</span><div class="stat-val" id="rrVal">-</div></div>
+      <div class="stat-item"><span class="stat-label">🧮 اللوت</span><div class="stat-val" id="lotVal">-</div></div>
+      <div class="stat-item"><span class="stat-label">💵 المخاطرة</span><div class="stat-val" id="riskVal">-$</div></div>
+    </div>
+
+    <div style="text-align:left; font-size:0.7rem; color:#888; margin-top:10px;">📈 المؤشرات:</div>
+    <div class="indicator-list" id="indicatorsList"></div>
+    
+    <div style="margin-top:10px; font-size:0.7rem; color:#666;" id="timestamp"></div>
+  </div>
+
+  <div class="footer">WORM GPT 👹 | حسين الدراجي</div>
+</div>
+
+<script>
+  function analyzeAll(price, support, resistance, style, capital) {
+    if (support >= resistance) return null;
+    const range = resistance - support;
+    const pos = (price - support) / range * 100;
+    
+    // --- المؤشرات الستة ---
+    const rsi = Math.min(100, Math.max(0, 50 + (pos - 50) * 2.2));
+    const macd = (pos - 50) * 0.035;
+    const bbPos = pos / 100;
+    const maScore = pos > 50 ? 1 : -1;
+    const stoch = Math.min(100, Math.max(0, 50 + (pos - 50) * 2.8));
+    
+    let score = 0;
+    let indicators = [];
+
+    // 1. RSI
+    if (rsi < 30) { score += 2; indicators.push({name:"RSI", status:"تشبع بيعي", bullish:true}); }
+    else if (rsi > 70) { score -= 2; indicators.push({name:"RSI", status:"تشبع شرائي", bullish:false}); }
+    else { indicators.push({name:"RSI", status:`${rsi.toFixed(0)} - محايد`, bullish:null}); }
+
+    // 2. MACD
+    if (macd > 0.2) { score += 1.5; indicators.push({name:"MACD", status:"صاعد", bullish:true}); }
+    else if (macd < -0.2) { score -= 1.5; indicators.push({name:"MACD", status:"هابط", bullish:false}); }
+    else { indicators.push({name:"MACD", status:"محايد", bullish:null}); }
+
+    // 3. Bollinger
+    if (bbPos < 0.25) { score += 2; indicators.push({name:"Bollinger", status:"قرب السفلي", bullish:true}); }
+    else if (bbPos > 0.75) { score -= 2; indicators.push({name:"Bollinger", status:"قرب العلوي", bullish:false}); }
+    else { indicators.push({name:"Bollinger", status:"وسط", bullish:null}); }
+
+    // 4. S/R
+    if (pos <= 20) { score += 3; indicators.push({name:"دعم/مقاومة", status:"قرب الدعم بقوة", bullish:true}); }
+    else if (pos >= 80) { score -= 3; indicators.push({name:"دعم/مقاومة", status:"قرب المقاومة بقوة", bullish:false}); }
+    else { indicators.push({name:"دعم/مقاومة", status:`في المنتصف (${pos.toFixed(0)}%)`, bullish:null}); }
+
+    // 5. Moving Average
+    if (maScore > 0) { score += 1; indicators.push({name:"المتوسط", status:"فوق المتوسط", bullish:true}); }
+    else { score -= 1; indicators.push({name:"المتوسط", status:"تحت المتوسط", bullish:false}); }
+
+    // 6. Stochastic
+    if (stoch < 20) { score += 1.5; indicators.push({name:"Stochastic", status:"تشبع بيعي", bullish:true}); }
+    else if (stoch > 80) { score -= 1.5; indicators.push({name:"Stochastic", status:"تشبع شرائي", bullish:false}); }
+    else { indicators.push({name:"Stochastic", status:"محايد", bullish:null}); }
+
+    // تعديل حسب الأسلوب
+    let tpMult, slMult;
+    if (style === 'scalp') { tpMult = 0.2; slMult = 0.08; }
+    else if (style === 'swing') { tpMult = 0.4; slMult = 0.12; }
+    else { tpMult = 0.7; slMult = 0.2; }
+
+    let action, color, tp, sl;
+    if (score >= 3) {
+      action = "🟢 شراء قوي"; color = "#00ff00";
+      tp = price + range * tpMult; sl = price - range * slMult;
+    } else if (score >= 1.5) {
+      action = "🟢 شراء"; color = "#88ff00";
+      tp = price + range * tpMult * 0.7; sl = price - range * slMult;
+    } else if (score <= -3) {
+      action = "🔴 بيع قوي"; color = "#ff4444";
+      tp = price - range * tpMult; sl = price + range * slMult;
+    } else if (score <= -1.5) {
+      action = "🔴 بيع"; color = "#ff8844";
+      tp = price - range * tpMult * 0.7; sl = price + range * slMult;
+    } else {
+      action = "🟡 انتظار"; color = "#ffaa00";
+      tp = price; sl = price;
+    }
+
+    const confidence = action.includes("انتظار") ? Math.max(30, 50 - Math.abs(score) * 10) : Math.min(95, 50 + Math.abs(score) * 10);
+    const reward = Math.abs(tp - price);
+    const risk = Math.abs(price - sl);
+    const rr = risk > 0 ? (reward / risk).toFixed(2) : "-";
+    
+    // حساب اللوت (2% مخاطرة)
+    const riskAmount = capital * 0.02;
+    const lotSize = risk > 0 ? (riskAmount / (risk * 100)).toFixed(3) : "0.01";
+
+    return { action, color, tp, sl, confidence, rr, lotSize, riskAmount: riskAmount.toFixed(0), indicators, score };
+  }
+
+  function runAnalysis() {
+    const price = parseFloat(document.getElementById('price').value);
+    const support = parseFloat(document.getElementById('support').value);
+    const resistance = parseFloat(document.getElementById('resistance').value);
+    const style = document.getElementById('style').value;
+    const capital = parseFloat(document.getElementById('capital').value) || 1000;
+    const symbol = document.getElementById('symbol').options[document.getElementById('symbol').selectedIndex].text;
+
+    if (isNaN(price) || isNaN(support) || isNaN(resistance)) {
+      alert('يرجى إدخال جميع الأرقام');
+      return;
+    }
+
+    const result = analyzeAll(price, support, resistance, style, capital);
+    if (!result) {
+      alert('خطأ: الدعم يجب أن يكون أقل من المقاومة');
+      return;
+    }
+
+    document.getElementById('symbolName').innerText = symbol + " • " + (style === 'scalp' ? 'سكالبينج' : style === 'swing' ? 'سوينغ' : 'طويل');
+    document.getElementById('decisionText').innerText = result.action;
+    document.getElementById('decisionText').style.color = result.color;
+    document.getElementById('tpVal').innerText = result.tp.toFixed(2);
+    document.getElementById('slVal').innerText = result.sl.toFixed(2);
+    document.getElementById('strengthVal').innerText = result.confidence.toFixed(0) + '%';
+    document.getElementById('rrVal').innerText = result.rr;
+    document.getElementById('lotVal').innerText = result.lotSize;
+    document.getElementById('riskVal').innerText = '$' + result.riskAmount;
+
+    const fill = document.getElementById('confidenceFill');
+    fill.style.width = result.confidence + '%';
+    fill.style.background = result.color;
+
+    let indHTML = '';
+    result.indicators.forEach(ind => {
+      let cls = ind.bullish === true ? 'bullish' : ind.bullish === false ? 'bearish' : '';
+      indHTML += `<div class="indicator-item ${cls}">• ${ind.name}: ${ind.status}</div>`;
+    });
+    document.getElementById('indicatorsList').innerHTML = indHTML;
+    document.getElementById('timestamp').innerText = new Date().toLocaleTimeString('ar-IQ');
+    document.getElementById('resultPanel').style.display = 'block';
+    document.getElementById('resultPanel').scrollIntoView({ behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>
