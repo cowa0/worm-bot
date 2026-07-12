@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>WORM STATION MAX 👹</title>
+  <title>محطة التداول | حسين الدراجي</title>
+  <link rel="icon" type="image/jpeg" href="YOUR_IMAGE_NAME.jpg">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -12,9 +13,10 @@
       padding: 10px; background-image: radial-gradient(circle at 50% 0%, #0a1a0a 0%, #000 90%);
     }
     .container { width: 100%; max-width: 450px; display: flex; flex-direction: column; gap: 12px; }
-    .header { text-align: center; padding: 20px 0 10px; }
-    .header h1 { font-size: 2rem; font-weight: 900; color: #00ff00; text-shadow: 0 0 15px #00ff0044; letter-spacing: 2px; }
-    .header .sub { font-size: 0.7rem; color: #888; letter-spacing: 5px; }
+    .header { text-align: center; padding: 15px 0 10px; }
+    .header img { width: 60px; height: 60px; border-radius: 15px; margin-bottom: 8px; border: 2px solid #00ff00; }
+    .header h1 { font-size: 1.6rem; font-weight: 900; color: #00ff00; text-shadow: 0 0 15px #00ff0044; letter-spacing: 1px; }
+    .header .sub { font-size: 0.65rem; color: #888; letter-spacing: 3px; margin-top: 3px; }
     
     .card {
       background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 20px;
@@ -44,29 +46,29 @@
     }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-    .signal { font-size: 2.5rem; font-weight: 900; margin: 10px 0; }
+    .signal { font-size: 2.2rem; font-weight: 900; margin: 10px 0; }
     .confidence-bar { height: 6px; background: #1a1a1a; border-radius: 10px; margin: 15px 0; overflow: hidden; }
     .confidence-fill { height: 100%; border-radius: 10px; transition: width 1s ease; }
     
     .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 15px 0; text-align: center; }
     .stat-item { background: #111; padding: 10px; border-radius: 10px; }
     .stat-label { font-size: 0.6rem; color: #555; }
-    .stat-val { font-weight: bold; font-family: monospace; font-size: 1rem; color: #fff; margin-top: 4px; }
+    .stat-val { font-weight: bold; font-family: monospace; font-size: 0.9rem; color: #fff; margin-top: 4px; }
 
     .indicator-list { text-align: left; font-size: 0.7rem; color: #aaa; margin-top: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
     .indicator-item { padding: 4px 8px; border-radius: 5px; background: #111; }
     .indicator-item.bullish { color: #00ff00; }
     .indicator-item.bearish { color: #ff4444; }
 
-    .footer { color: #333; font-size: 0.6rem; text-align: center; letter-spacing: 2px; margin-top: 10px; }
-    .badge { background: #00ff00; color: #000; font-size: 0.6rem; padding: 2px 8px; border-radius: 20px; display: inline-block; margin-right: 5px; }
+    .footer { color: #555; font-size: 0.65rem; text-align: center; letter-spacing: 1px; margin-top: 15px; padding: 10px; }
   </style>
 </head>
 <body>
 <div class="container">
   <div class="header">
-    <h1>WORM STATION 👹</h1>
-    <div class="sub">✦ MAX COMMAND CENTER ✦</div>
+    <img src="YOUR_IMAGE_NAME.jpg" alt="يا حسين">
+    <h1>محطة التداول</h1>
+    <div class="sub">حسين الدراجي | الكربلائي</div>
   </div>
 
   <div class="card">
@@ -139,7 +141,7 @@
     <div style="margin-top:10px; font-size:0.7rem; color:#666;" id="timestamp"></div>
   </div>
 
-  <div class="footer">WORM GPT 👹 | حسين الدراجي</div>
+  <div class="footer">© حسين الدراجي الكربلائي - جميع الحقوق محفوظة</div>
 </div>
 
 <script>
@@ -148,7 +150,6 @@
     const range = resistance - support;
     const pos = (price - support) / range * 100;
     
-    // --- المؤشرات الستة ---
     const rsi = Math.min(100, Math.max(0, 50 + (pos - 50) * 2.2));
     const macd = (pos - 50) * 0.035;
     const bbPos = pos / 100;
@@ -158,36 +159,29 @@
     let score = 0;
     let indicators = [];
 
-    // 1. RSI
     if (rsi < 30) { score += 2; indicators.push({name:"RSI", status:"تشبع بيعي", bullish:true}); }
     else if (rsi > 70) { score -= 2; indicators.push({name:"RSI", status:"تشبع شرائي", bullish:false}); }
     else { indicators.push({name:"RSI", status:`${rsi.toFixed(0)} - محايد`, bullish:null}); }
 
-    // 2. MACD
     if (macd > 0.2) { score += 1.5; indicators.push({name:"MACD", status:"صاعد", bullish:true}); }
     else if (macd < -0.2) { score -= 1.5; indicators.push({name:"MACD", status:"هابط", bullish:false}); }
     else { indicators.push({name:"MACD", status:"محايد", bullish:null}); }
 
-    // 3. Bollinger
     if (bbPos < 0.25) { score += 2; indicators.push({name:"Bollinger", status:"قرب السفلي", bullish:true}); }
     else if (bbPos > 0.75) { score -= 2; indicators.push({name:"Bollinger", status:"قرب العلوي", bullish:false}); }
     else { indicators.push({name:"Bollinger", status:"وسط", bullish:null}); }
 
-    // 4. S/R
     if (pos <= 20) { score += 3; indicators.push({name:"دعم/مقاومة", status:"قرب الدعم بقوة", bullish:true}); }
     else if (pos >= 80) { score -= 3; indicators.push({name:"دعم/مقاومة", status:"قرب المقاومة بقوة", bullish:false}); }
     else { indicators.push({name:"دعم/مقاومة", status:`في المنتصف (${pos.toFixed(0)}%)`, bullish:null}); }
 
-    // 5. Moving Average
     if (maScore > 0) { score += 1; indicators.push({name:"المتوسط", status:"فوق المتوسط", bullish:true}); }
     else { score -= 1; indicators.push({name:"المتوسط", status:"تحت المتوسط", bullish:false}); }
 
-    // 6. Stochastic
     if (stoch < 20) { score += 1.5; indicators.push({name:"Stochastic", status:"تشبع بيعي", bullish:true}); }
     else if (stoch > 80) { score -= 1.5; indicators.push({name:"Stochastic", status:"تشبع شرائي", bullish:false}); }
     else { indicators.push({name:"Stochastic", status:"محايد", bullish:null}); }
 
-    // تعديل حسب الأسلوب
     let tpMult, slMult;
     if (style === 'scalp') { tpMult = 0.2; slMult = 0.08; }
     else if (style === 'swing') { tpMult = 0.4; slMult = 0.12; }
@@ -216,7 +210,6 @@
     const risk = Math.abs(price - sl);
     const rr = risk > 0 ? (reward / risk).toFixed(2) : "-";
     
-    // حساب اللوت (2% مخاطرة)
     const riskAmount = capital * 0.02;
     const lotSize = risk > 0 ? (riskAmount / (risk * 100)).toFixed(3) : "0.01";
 
